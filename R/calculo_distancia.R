@@ -23,6 +23,7 @@ lojas <- lojas %>%
 lojas <- lojas[,-6]
 lojas %>% janitor::tabyl(qtd_caracters)
 
+# Carregar UserID
 clientes <- read_csv("date/userid.csv") %>%
   mutate(latitude  = round(latitude , 5), longitude = round(longitude,5)) %>%
   distinct(.keep_all = TRUE)
@@ -32,7 +33,7 @@ glimpse(clientes)
 # Cep das lojas
 cep_t = lojas$cep
 
-# Buscar as coordenadas
+# Buscar as coordenadas das lojas
 lojas_ll = as.data.frame(NULL)
 for(i in 1:length(cep_t)){
   Sys.sleep(1.2)
@@ -41,8 +42,6 @@ for(i in 1:length(cep_t)){
 }
 
 lojas_ll <- na.omit(lojas_ll)
-lojas_ll$latitude
-
 
 # Codigo da loja com as coordenadas
 lojas_ll <- inner_join(lojas, select(lojas_ll,cep, latitude,longitude), by = c("cep"="cep"))
@@ -78,6 +77,4 @@ clientes <- clientes %>%
   mutate(across(H006:T814, ~ if_else(.x <= 2,1,0)))
 
 clientes %>%
-summarise(across(H006:T814, ~ sum(.x))) %>% t()
-
-
+summarise(across(H006:T814, ~ sum(.x)))
